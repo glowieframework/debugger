@@ -1,0 +1,34 @@
+<style>
+    <?= str_replace(["\n", "\r", "\t"], '', file_get_contents($this->css_path)); ?>
+</style>
+
+<div class="glowie-debugger">
+    <div class="glowie-debugger-menu">
+        <a href="" class="glowie-debugger-menu-active">
+            { if(count($this->messages) > 0) }
+            <i>{{count($this->messages)}}</i>
+            { /if }
+            Console
+        </a>
+        <a href="">Request</a>
+        <a href="">Response</a>
+        <a href="">Session</a>
+        <a href="">Cookies</a>
+        <a href="">Application</a>
+    </div>
+
+    <div class="glowie-debugger-content" id="glowie-debugger-tab-1">
+        <div id="glowie-debugger-tab-1">
+            { foreach($this->messages as $message) }
+            <div class="glowie-debugger-content-message" style="--glowie-debugger-css: {{ $message['color'] }}">
+                <span>{{ $message['date'] }}</span>
+                {{ $message['text'] }}
+            </div>
+            { /foreach }
+        </div>
+
+        <div id="glowie-debugger-tab-2">
+
+        </div>
+    </div>
+</div>
