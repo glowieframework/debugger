@@ -1,34 +1,158 @@
 <style>
-    <?= str_replace(["\n", "\r", "\t"], '', file_get_contents($this->css_path)); ?>
+    <?= file_get_contents($this->css_path); ?>
 </style>
 
-<div class="glowie-debugger">
-    <div class="glowie-debugger-menu">
-        <a href="" class="glowie-debugger-menu-active">
-            { if(count($this->messages) > 0) }
-            <i>{{count($this->messages)}}</i>
-            { /if }
-            Console
-        </a>
-        <a href="">Request</a>
-        <a href="">Response</a>
-        <a href="">Session</a>
-        <a href="">Cookies</a>
-        <a href="">Application</a>
-    </div>
-
-    <div class="glowie-debugger-content" id="glowie-debugger-tab-1">
-        <div id="glowie-debugger-tab-1">
-            { foreach($this->messages as $message) }
-            <div class="glowie-debugger-content-message" style="--glowie-debugger-css: {{ $message['color'] }}">
-                <span>{{ $message['date'] }}</span>
-                {{ $message['text'] }}
-            </div>
-            { /foreach }
+<div class="gdbg">
+    <div class="gdbg-container">
+        <div class="gdbg-menu">
+            <a href="" class="gdbg-menu-active" data-target="#gdbg-tab-1">
+                { if(count($this->messages) > 0) }
+                <i>{{ count($this->messages) }}</i>
+                { /if }
+                Console
+            </a>
+            <a href="" data-target="#gdbg-tab-2">
+                { if(count($this->exceptions) > 0) }
+                <i>{{ count($this->exceptions) }}</i>
+                { /if }
+                Exceptions
+            </a>
+            <a href="" data-target="#gdbg-tab-3">Timeline</a>
+            <a href="" data-target="#gdbg-tab-4">Request</a>
+            <a href="" data-target="#gdbg-tab-5">Headers</a>
+            <a href="" data-target="#gdbg-tab-6">
+                <span class="gdbg-status-code gdbg-status-code-{{ $this->status_type }}">{{ $this->status }}</span>
+                Response
+            </a>
+            <a href="" data-target="#gdbg-tab-7">Session</a>
+            <a href="" data-target="#gdbg-tab-8">Cookies</a>
+            <a href="" data-target="#gdbg-tab-9">Route</a>
         </div>
 
-        <div id="glowie-debugger-tab-2">
+        <div class="gdbg-content">
+            <div class="gdbg-tab gdbg-tab-active" id="gdbg-tab-1">
+                <table cellspacing="0" cellpadding="0">
+                    { foreach($this->messages as $message) }
+                    <tr class="gdbg-row-{{ $message['type'] }}">
+                        <td class="gdbg-message-time">
+                            {{ $message['time'] }}
+                        </td>
+                        <td class="gdbg-message">
+                            { if($message['type'] == 'error') }🚫{ /if }
+                            { if($message['type'] == 'warning') }⚠️{ /if }
+                            {{ $message['text'] }}
+                        </td>
+                    </tr>
+                    { /foreach }
+                </table>
+            </div>
 
+            <div class="gdbg-tab" id="gdbg-tab-2">
+                <table cellspacing="0" cellpadding="0">
+                    { foreach($this->exceptions as $e) }
+                    <tr class="gdbg-row-error">
+                        <td class="gdbg-message-time">
+                            {{ $e['time'] }}
+                        </td>
+                        <td class="gdbg-message">
+                            🚫 <strong>{{ $e['exception']->getMessage() }}</strong> on file <strong>{{ $e['exception']->getFile() }}</strong> at line <strong>{{ $e['exception']->getLine() }}.</strong>
+                            <br>
+                            <a href="" class="gdbg-trace-toggle">See trace ▼</a>
+                            <div class="gdbg-exception-trace">
+                                {{!! nl2br($e['exception']->getTraceAsString()) !!}}
+                            </div>
+                        </td>
+                    </tr>
+                    { /foreach }
+                </table>
+            </div>
+
+            <div class="gdbg-tab" id="gdbg-tab-3">
+                <table cellspacing="0" cellpadding="0">
+                    { foreach($this->timers as $name => $value) }
+                    <tr>
+                        <td class="gdbg-data-key">
+                            {{ $name }}
+                        </td>
+                        <td class="gdbg-timer-progress">
+                            <div class="gdbg-timer-bar" style="--gdbg-bar-width: {{ $value['size'] }}">
+                                {{ $value['duration_string'] }}
+                            </div>
+                        </td>
+                    </tr>
+                    { /foreach }
+                </table>
+            </div>
+
+            <div class="gdbg-tab" id="gdbg-tab-4">
+                <table cellspacing="0" cellpadding="0">
+                    { foreach($this->request as $key => $value) }
+                    <tr>
+                        <td class="gdbg-data-key">{{ $key }}</td>
+                        <td class="gdbg-data-value">{{ $value }}</td>
+                    </tr>
+                    { /foreach }
+                </table>
+            </div>
+
+            <div class="gdbg-tab" id="gdbg-tab-5">
+                <table cellspacing="0" cellpadding="0">
+                    { foreach($this->headers as $key => $value) }
+                    <tr>
+                        <td class="gdbg-data-key">{{ $key }}</td>
+                        <td class="gdbg-data-value">{{ $value }}</td>
+                    </tr>
+                    { /foreach }
+                </table>
+            </div>
+
+            <div class="gdbg-tab" id="gdbg-tab-6">
+                <table cellspacing="0" cellpadding="0">
+                    { foreach($this->response as $key => $value) }
+                    <tr>
+                        <td class="gdbg-data-key">{{ $key }}</td>
+                        <td class="gdbg-data-value">{{ $value }}</td>
+                    </tr>
+                    { /foreach }
+                </table>
+            </div>
+
+            <div class="gdbg-tab" id="gdbg-tab-7">
+                <table cellspacing="0" cellpadding="0">
+                    { foreach($this->session as $key => $value) }
+                    <tr>
+                        <td class="gdbg-data-key">{{ $key }}</td>
+                        <td class="gdbg-data-value">{{ json_encode($value) }}</td>
+                    </tr>
+                    { /foreach }
+                </table>
+            </div>
+
+            <div class="gdbg-tab" id="gdbg-tab-8">
+                <table cellspacing="0" cellpadding="0">
+                    { foreach($this->cookies as $key => $value) }
+                    <tr>
+                        <td class="gdbg-data-key">{{ $key }}</td>
+                        <td class="gdbg-data-value">{{ json_encode($value) }}</td>
+                    </tr>
+                    { /foreach }
+                </table>
+            </div>
+
+            <div class="gdbg-tab" id="gdbg-tab-9">
+                <table cellspacing="0" cellpadding="0">
+                    { foreach($this->route as $key => $value) }
+                    <tr>
+                        <td class="gdbg-data-key">{{ $key }}</td>
+                        <td class="gdbg-data-value">{{ $value }}</td>
+                    </tr>
+                    { /foreach }
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    <?= file_get_contents($this->js_path); ?>
+</script>
