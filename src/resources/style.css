@@ -177,6 +177,9 @@
   font-size: 14px;
   color: dimgray;
   vertical-align: top;
+  -webkit-user-select: all;
+     -moz-user-select: all;
+          user-select: all;
 }
 .gdbg-content table .gdbg-timer-progress {
   padding: 5px;
@@ -198,6 +201,9 @@
   font-family: monospace;
   max-width: 100%;
   word-break: break-all;
+  -webkit-user-select: all;
+     -moz-user-select: all;
+          user-select: all;
 }
 .gdbg-content table .gdbg-expandable-value {
   overflow: hidden;
@@ -205,8 +211,11 @@
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
+  color: #7b7b7b;
+  -webkit-user-select: text;
+     -moz-user-select: text;
+          user-select: text;
   cursor: pointer;
-  color: #545454;
 }
 .gdbg-content table .gdbg-expandable-value-show {
   overflow: visible;

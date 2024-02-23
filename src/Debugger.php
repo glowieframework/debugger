@@ -83,14 +83,14 @@
                 'request' => $request,
                 'request_method' => Rails::getRequest()->getMethod(),
                 'method_type' => self::parseMethod(Rails::getRequest()->getMethod()),
-                'status' => http_response_code(),
-                'status_type' => self::parseStatusCode(http_response_code()),
+                'status' => Rails::getResponse()->getStatusCode(),
+                'status_type' => self::parseStatusCode(Rails::getResponse()->getStatusCode()),
                 'headers' => $headers,
                 'response' => $response,
                 'session' => (new Session())->toArray(),
                 'cookies' => (new Cookies())->toArray(),
-                'application' => self::parseAppInfo(),
-                'timers' => self::parseTimers()
+                'timers' => self::parseTimers(),
+                'application' => self::parseAppInfo()
             ], true, true);
 
             // Return content
@@ -140,7 +140,7 @@
         public static function exception(Throwable $exception){
             self::$exceptions[] = [
                 'exception' => $exception,
-                'time' => self::parseTime(round((microtime(true) - APP_START_TIME) * 1000, 2))
+                'time' => self::parseTime(self::now())
             ];
         }
 
@@ -199,7 +199,7 @@
         private static function addMessage(string $type, string $message){
             self::$messages[] = [
                 'type' => $type,
-                'time' =>  self::parseTime(round((microtime(true) - APP_START_TIME) * 1000, 2)),
+                'time' =>  self::parseTime(self::now()),
                 'text' => $message,
             ];
         }
@@ -211,7 +211,7 @@
         private static function parseTimers(){
             // Order timers from longest to shortest
             $timers = Util::orderArray(self::$timers, 'duration', SORT_DESC);
-            $renderTime = round((microtime(true) - APP_START_TIME) * 1000, 2);
+            $renderTime = self::now();
 
             if(!empty($timers)){
                 foreach($timers as $name => &$item){
@@ -229,6 +229,14 @@
         }
 
         /**
+         * Gets the current time from the app start in milisseconds.
+         * @return float Returns the current request time.
+         */
+        private static function now(){
+            return round((microtime(true) - APP_START_TIME) * 1000, 2);
+        }
+
+        /**
          * Parses the application data.
          * @return array App information as an associative array.
          */
@@ -241,7 +249,8 @@
                 'PHP Version' => phpversion(),
                 'Glowie Version' => Util::getVersion(),
                 'Memory Usage' => self::parseMemory(memory_get_usage()),
-                'Peak Usage' => self::parseMemory(memory_get_peak_usage())
+                'Peak Usage' => self::parseMemory(memory_get_peak_usage()),
+                'Request Time' => self::parseTime(self::now())
             ];
         }
 
@@ -264,7 +273,9 @@
          */
         private static function parseTime(float $time){
             if($time <= 1000) return $time . 'ms';
-            return round($time / 1000, 2) . 's';
+            if($time <= 60000) return round($time / 1000, 2) . 's';
+            if($time <= 3600000) return round($time / 60000, 2) . 'min';
+            return round($time / 3600000, 2) . 'h';
         }
 
         /**

@@ -47,7 +47,7 @@
                             { if($message['type'] == 'error') }🚫{ /if }
                             { if($message['type'] == 'warning') }⚠️{ /if }
                             { if($message['type'] == 'dump') }
-                            <a href="" class="gdbg-expandable-value">{{ $message['text'] }}</a>
+                            <span title="Total length: {{ strlen($message['text']) }}" class="gdbg-expandable-value">{{ $message['text'] }}</span>
                             { else }
                             {{ $message['text'] }}
                             { /if }
