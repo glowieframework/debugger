@@ -7,6 +7,7 @@
     use Glowie\Core\Plugin;
     use Glowie\Core\View\Skeltch;
     use Glowie\Core\View\View;
+    use Glowie\Core\View\Buffer;
     use Util;
     use Env;
     use Throwable;
@@ -80,19 +81,21 @@
                 'messages' => self::$messages,
                 'exceptions' => self::$exceptions,
                 'request' => $request,
+                'request_method' => Rails::getRequest()->getMethod(),
+                'method_type' => self::parseMethod(Rails::getRequest()->getMethod()),
                 'status' => http_response_code(),
                 'status_type' => self::parseStatusCode(http_response_code()),
                 'headers' => $headers,
                 'response' => $response,
                 'session' => (new Session())->toArray(),
                 'cookies' => (new Cookies())->toArray(),
-                'route' => self::parseRouteInfo(),
+                'application' => self::parseAppInfo(),
                 'timers' => self::parseTimers()
             ], true, true);
 
             // Return content
             self::$isLoaded = true;
-            echo str_replace(["\n", "\r", "\t"], '', $view->getContent());
+            echo $view->getContent();
         }
 
         /**
@@ -120,13 +123,24 @@
         }
 
         /**
+         * Dumps a variable to the console.
+         * @param mixed $var Variable to dump.
+         */
+        public static function dump($var){
+            Buffer::start();
+            var_dump($var);
+            $content = Buffer::get();
+            self::addMessage('dump', $content);
+        }
+
+        /**
          * Adds an exception to the log.
          * @param Throwable $exception Exception instance.
          */
         public static function exception(Throwable $exception){
             self::$exceptions[] = [
                 'exception' => $exception,
-                'time' => round((microtime(true) - APP_START_TIME) * 1000, 2) . 'ms'
+                'time' => self::parseTime(round((microtime(true) - APP_START_TIME) * 1000, 2))
             ];
         }
 
@@ -163,7 +177,7 @@
 
             self::$timers[$name]['end'] = $time;
             self::$timers[$name]['duration'] = $duration;
-            self::$timers[$name]['duration_string'] = ($duration <= 1000) ? ($duration . 'ms') : (round($duration / 1000, 2) . 's');
+            self::$timers[$name]['duration_string'] = self::parseTime($duration);
         }
 
         /**
@@ -185,7 +199,7 @@
         private static function addMessage(string $type, string $message){
             self::$messages[] = [
                 'type' => $type,
-                'time' => round((microtime(true) - APP_START_TIME) * 1000, 2) . 'ms',
+                'time' =>  self::parseTime(round((microtime(true) - APP_START_TIME) * 1000, 2)),
                 'text' => $message,
             ];
         }
@@ -195,32 +209,39 @@
          * @return array Returns the timers as an associative array.
          */
         private static function parseTimers(){
+            // Order timers from longest to shortest
             $timers = Util::orderArray(self::$timers, 'duration', SORT_DESC);
             $renderTime = round((microtime(true) - APP_START_TIME) * 1000, 2);
 
             if(!empty($timers)){
                 foreach($timers as $name => &$item){
+                    // Stop timer if not yet
                     if($item['end'] === null) self::stopTimer($name);
 
+                    // Calculate the progress bar size
                     $size = ($item['duration'] / $renderTime) * 100;
                     $item['size'] = round($size, 2) . '%';
                 }
             }
 
+            // Return result
             return $timers;
         }
 
         /**
-         * Parses the current route data.
-         * @return array Route information as an associative array.
+         * Parses the application data.
+         * @return array App information as an associative array.
          */
-        private static function parseRouteInfo(){
+        private static function parseAppInfo(){
             $route = Rails::getRoute(Rails::getCurrentRoute());
             return [
-                'name' => !Util::isEmpty($route['name']) ? $route['name'] : '/',
-                'uri' => !empty($route['uri']) ? $route['uri'] : '/',
-                'methods' => !empty($route['methods']) ? strtoupper(implode(', ', $route['methods'])) : 'ALL',
-                'target' => !empty($route['controller']) ? ($route['controller'] . '::' . $route['action'] . '()') : ($route['code'] . ' ' . $route['redirect'])
+                'Route' => !Util::isEmpty($route['name']) ? $route['name'] : '/',
+                'Controller' => $route['controller'],
+                'Action' => $route['action'],
+                'PHP Version' => phpversion(),
+                'Glowie Version' => Util::getVersion(),
+                'Memory Usage' => self::parseMemory(memory_get_usage()),
+                'Peak Usage' => self::parseMemory(memory_get_peak_usage())
             ];
         }
 
@@ -234,6 +255,61 @@
             if($code >= 300) return 'blue';
             if($code >= 200) return 'green';
             return 'white';
+        }
+
+        /**
+         * Parse a time float to a readable string.
+         * @param float $time Time value.
+         * @return string Returns the parsed string.
+         */
+        private static function parseTime(float $time){
+            if($time <= 1000) return $time . 'ms';
+            return round($time / 1000, 2) . 's';
+        }
+
+        /**
+         * Parse a size value to a readable string.
+         * @param int $size Size in bytes.
+         * @return string Returns the parsed string.
+         */
+        private static function parseMemory(int $size){
+            if ($size >= 1073741824){
+                $size = number_format($size / 1073741824, 2) . ' GB';
+            }else if ($size >= 1048576){
+                $size = number_format($size / 1048576, 2) . ' MB';
+            }else if ($size >= 1024){
+                $size = number_format($size / 1024, 2) . ' KB';
+            }else if ($size > 1){
+                $size = $size . ' bytes';
+            }else if ($size == 1){
+                $size = $size . ' byte';
+            }else{
+                $size = '0 bytes';
+            }
+            return $size;
+        }
+
+        /**
+         * Returns the request method color.
+         * @return string Color name as string.
+         */
+        private static function parseMethod(string $method){
+            switch ($method) {
+                case 'GET':
+                    return 'blue';
+                case 'PUT':
+                    return 'yellow';
+                case 'POST':
+                case 'PATCH':
+                    return 'green';
+                case 'DELETE':
+                    return 'red';
+                case 'HEAD':
+                case 'OPTIONS':
+                    return 'purple';
+                default:
+                    return 'white';
+            }
         }
     }
 

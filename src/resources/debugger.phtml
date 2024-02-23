@@ -1,11 +1,13 @@
+<!-- DEBUGGER -->
 <style>
     <?= file_get_contents($this->css_path); ?>
 </style>
 
 <div class="gdbg">
+    <a href="" class="gdbg-toggler">Debugger ▲</a>
     <div class="gdbg-container">
         <div class="gdbg-menu">
-            <a href="" class="gdbg-menu-active" data-target="#gdbg-tab-1">
+            <a href="" data-target="#gdbg-tab-1">
                 { if(count($this->messages) > 0) }
                 <i>{{ count($this->messages) }}</i>
                 { /if }
@@ -18,7 +20,10 @@
                 Exceptions
             </a>
             <a href="" data-target="#gdbg-tab-3">Timeline</a>
-            <a href="" data-target="#gdbg-tab-4">Request</a>
+            <a href="" data-target="#gdbg-tab-4">
+                <span class="gdbg-status-code gdbg-status-code-{{ $this->method_type }}">{{ $this->request_method }}</span>
+                Request
+            </a>
             <a href="" data-target="#gdbg-tab-5">Headers</a>
             <a href="" data-target="#gdbg-tab-6">
                 <span class="gdbg-status-code gdbg-status-code-{{ $this->status_type }}">{{ $this->status }}</span>
@@ -26,11 +31,12 @@
             </a>
             <a href="" data-target="#gdbg-tab-7">Session</a>
             <a href="" data-target="#gdbg-tab-8">Cookies</a>
-            <a href="" data-target="#gdbg-tab-9">Route</a>
+            <a href="" data-target="#gdbg-tab-9">Application</a>
+            <a href="" class="gdbg-close">✖️</a>
         </div>
 
         <div class="gdbg-content">
-            <div class="gdbg-tab gdbg-tab-active" id="gdbg-tab-1">
+            <div class="gdbg-tab" id="gdbg-tab-1">
                 <table cellspacing="0" cellpadding="0">
                     { foreach($this->messages as $message) }
                     <tr class="gdbg-row-{{ $message['type'] }}">
@@ -40,7 +46,11 @@
                         <td class="gdbg-message">
                             { if($message['type'] == 'error') }🚫{ /if }
                             { if($message['type'] == 'warning') }⚠️{ /if }
+                            { if($message['type'] == 'dump') }
+                            <a href="" class="gdbg-expandable-value">{{ $message['text'] }}</a>
+                            { else }
                             {{ $message['text'] }}
+                            { /if }
                         </td>
                     </tr>
                     { /foreach }
@@ -141,7 +151,7 @@
 
             <div class="gdbg-tab" id="gdbg-tab-9">
                 <table cellspacing="0" cellpadding="0">
-                    { foreach($this->route as $key => $value) }
+                    { foreach($this->application as $key => $value) }
                     <tr>
                         <td class="gdbg-data-key">{{ $key }}</td>
                         <td class="gdbg-data-value">{{ $value }}</td>
@@ -156,3 +166,4 @@
 <script>
     <?= file_get_contents($this->js_path); ?>
 </script>
+<!-- ./ END OF DEBUGGER -->

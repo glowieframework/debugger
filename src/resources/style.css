@@ -18,6 +18,29 @@
   width: 100%;
   z-index: 1000000000000000000000000000000;
   background-color: white;
+  flex-flow: column;
+  display: none;
+}
+.gdbg-container-show {
+  display: flex;
+}
+.gdbg-toggler {
+  position: fixed;
+  bottom: 0;
+  right: 50px;
+  color: white;
+  background-color: #546e7a;
+  z-index: 1000000000000000000000000000000;
+  display: none;
+  padding: 5px 10px;
+  border: 1px solid #78909c;
+  border-bottom: none;
+  border-radius: 5px 5px 0 0;
+  font-size: 15px;
+  font-weight: 500;
+}
+.gdbg-toggler-show {
+  display: block;
 }
 .gdbg-menu {
   display: flex;
@@ -48,6 +71,11 @@
   border-top: none;
   border-bottom: none;
 }
+.gdbg-menu a.gdbg-close {
+  margin-left: auto;
+  border: none;
+  font-size: 15px;
+}
 .gdbg-menu a .gdbg-status-code {
   display: inline-block;
   padding: 2px 5px;
@@ -67,6 +95,9 @@
 }
 .gdbg-menu a .gdbg-status-code-red {
   background-color: #e53935;
+}
+.gdbg-menu a .gdbg-status-code-purple {
+  background-color: #6a1b9a;
 }
 .gdbg-menu a .gdbg-status-code-white {
   background-color: white;
@@ -89,7 +120,7 @@
 .gdbg-menu a:first-child {
   border-left: none;
 }
-.gdbg-menu a:last-child {
+.gdbg-menu a:nth-last-child(2) {
   border-right: none;
 }
 .gdbg-menu a.gdbg-menu-active {
@@ -99,6 +130,7 @@
 .gdbg-content {
   overflow-y: auto;
   height: 100%;
+  flex: 1;
 }
 .gdbg-content .gdbg-tab {
   display: none;
@@ -160,11 +192,28 @@
   min-width: -moz-max-content;
   min-width: max-content;
 }
-.gdbg-content table .gdbg-data-value {
+.gdbg-content table .gdbg-data-value,
+.gdbg-content table .gdbg-expandable-value {
   font-size: 14px;
   font-family: monospace;
-  white-space: pre;
   max-width: 100%;
+  word-break: break-all;
+}
+.gdbg-content table .gdbg-expandable-value {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  color: #545454;
+}
+.gdbg-content table .gdbg-expandable-value-show {
+  overflow: visible;
+  display: block;
+  -webkit-line-clamp: unset;
+  text-overflow: unset;
+  white-space: pre;
 }
 .gdbg-content table .gdbg-row-warning {
   background-color: #fff9c4;
