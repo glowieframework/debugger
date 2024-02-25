@@ -1,15 +1,20 @@
 .gdbg * {
+  box-sizing: border-box;
   margin: 0;
-  font-style: normal;
   padding: 0;
+  font-style: normal;
   font-family: "Segoe UI", "Tahoma", sans-serif;
+  font-weight: normal;
   font-size: 16px;
+  line-height: initial;
   color: black;
   background: none;
-  font-weight: normal;
   border: none;
-  line-height: initial;
   text-decoration: none;
+  outline: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 .gdbg-container {
   position: fixed;
@@ -36,6 +41,7 @@
   border: 1px solid #78909c;
   border-bottom: none;
   border-radius: 5px 5px 0 0;
+  cursor: pointer;
   font-size: 15px;
   font-weight: 500;
 }
@@ -62,7 +68,7 @@
   width: 100%;
   cursor: row-resize;
 }
-.gdbg-menu a {
+.gdbg-menu button {
   padding: 5px 15px;
   font-size: 14px;
   font-weight: 500;
@@ -70,13 +76,14 @@
   border: 1px solid #b0bec5;
   border-top: none;
   border-bottom: none;
+  cursor: pointer;
 }
-.gdbg-menu a.gdbg-close {
+.gdbg-menu button.gdbg-close {
   margin-left: auto;
   border: none;
   font-size: 15px;
 }
-.gdbg-menu a .gdbg-status-code {
+.gdbg-menu button .gdbg-status-code {
   display: inline-block;
   padding: 2px 5px;
   color: white;
@@ -84,26 +91,26 @@
   font-weight: 500;
   margin-right: 3px;
 }
-.gdbg-menu a .gdbg-status-code-green {
+.gdbg-menu button .gdbg-status-code-green {
   background-color: #4caf50;
 }
-.gdbg-menu a .gdbg-status-code-yellow {
+.gdbg-menu button .gdbg-status-code-yellow {
   background-color: #f9a825;
 }
-.gdbg-menu a .gdbg-status-code-blue {
+.gdbg-menu button .gdbg-status-code-blue {
   background-color: #2196f3;
 }
-.gdbg-menu a .gdbg-status-code-red {
+.gdbg-menu button .gdbg-status-code-red {
   background-color: #e53935;
 }
-.gdbg-menu a .gdbg-status-code-purple {
+.gdbg-menu button .gdbg-status-code-purple {
   background-color: #6a1b9a;
 }
-.gdbg-menu a .gdbg-status-code-white {
+.gdbg-menu button .gdbg-status-code-white {
   background-color: white;
   color: black;
 }
-.gdbg-menu a i {
+.gdbg-menu button i {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -117,13 +124,13 @@
   background-color: #f44336;
   font-style: normal;
 }
-.gdbg-menu a:first-child {
+.gdbg-menu button:first-child {
   border-left: none;
 }
-.gdbg-menu a:nth-last-child(2) {
+.gdbg-menu button:nth-last-child(2) {
   border-right: none;
 }
-.gdbg-menu a.gdbg-menu-active {
+.gdbg-menu button.gdbg-menu-active {
   color: white;
   background-color: #607d8b;
 }
@@ -194,6 +201,9 @@
   padding: 2px;
   min-width: -moz-max-content;
   min-width: max-content;
+}
+.gdbg-content table .gdbg-timer-bar-request {
+  background-color: #4caf50;
 }
 .gdbg-content table .gdbg-data-value,
 .gdbg-content table .gdbg-expandable-value {

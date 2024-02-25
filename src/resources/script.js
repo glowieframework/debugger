@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // -- Tab Switcher
     const tabs = document.querySelectorAll('.gdbg .gdbg-tab');
-    const menus = document.querySelectorAll('.gdbg .gdbg-menu a:not(.gdbg-close)');
+    const menus = document.querySelectorAll('.gdbg .gdbg-menu button:not(.gdbg-close)');
     const currentTab = window.localStorage.getItem('gdbg-tab') || '#gdbg-tab-1';
 
     menus.forEach(a => {
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     toggleTab(currentTab);
-    document.querySelector('a[data-target="' + currentTab + '"]').classList.add('gdbg-menu-active');
+    document.querySelector('.gdbg .gdbg-menu button[data-target="' + currentTab + '"]').classList.add('gdbg-menu-active');
 
     // -- Trace toggler
     const togglers = document.querySelectorAll('.gdbg .gdbg-trace-toggle');

@@ -107,6 +107,14 @@
         }
 
         /**
+         * Prints an info message to the console. Alias of `log()`.
+         * @param string $message Message to print.
+         */
+        public static function info(string $message){
+            return self::log($message);
+        }
+
+        /**
          * Prints an error message to the console.
          * @param string $message Message to print.
          */
@@ -145,21 +153,36 @@
         }
 
         /**
-         * Clears the console and exceptions log.
+         * Clears the console.
          */
         public static function clear(){
             self::$messages = [];
+        }
+
+        /**
+         * Clears the exceptions.
+         */
+        public static function clearExceptions(){
             self::$exceptions = [];
+        }
+
+        /**
+         * Clears the timers.
+         */
+        public static function clearTimers(){
+            self::$timers = [];
         }
 
         /**
          * Starts a timer measurement.
          * @param string $name Timer name.
+         * @param string|null $description (Optional) Timer description.
          */
-        public static function startTimer(string $name){
+        public static function startTimer(string $name, ?string $description = null){
             self::$timers[$name] = [
                 'start' => microtime(true),
                 'end' => null,
+                'description' => $description ?? $name,
                 'duration' => 0,
                 'duration_string' => ''
             ];
@@ -184,9 +207,10 @@
          * Runs a function with measurement.
          * @param string $name Timer name.
          * @param Closure $callback Function to run.
+         * @param string|null $description (Optional) Timer description.
          */
-        public static function measure(string $name, Closure $callback){
-            self::startTimer($name);
+        public static function measure(string $name, Closure $callback, ?string $description = null){
+            self::startTimer($name, $description);
             call_user_func($callback);
             self::stopTimer($name);
         }
@@ -245,7 +269,8 @@
             return [
                 'Route' => !Util::isEmpty($route['name']) ? $route['name'] : '/',
                 'Controller' => $route['controller'],
-                'Action' => $route['action'],
+                'Action' => $route['action'] . '()',
+                'Middlewares' => !empty($route['middleware']) ? implode(', ', $route['middleware']) : '-',
                 'PHP Version' => phpversion(),
                 'Glowie Version' => Util::getVersion(),
                 'Memory Usage' => self::parseMemory(memory_get_usage()),

@@ -4,35 +4,35 @@
 </style>
 
 <div class="gdbg">
-    <a href="" class="gdbg-toggler">Debugger ▲</a>
+    <button class="gdbg-toggler" title="Open Debug Bar">Debugger ▲</button>
     <div class="gdbg-container">
         <div class="gdbg-menu">
-            <a href="" data-target="#gdbg-tab-1">
+            <button data-target="#gdbg-tab-1">
                 { if(count($this->messages) > 0) }
                 <i>{{ count($this->messages) }}</i>
                 { /if }
                 Console
-            </a>
-            <a href="" data-target="#gdbg-tab-2">
+            </button>
+            <button data-target="#gdbg-tab-2">
                 { if(count($this->exceptions) > 0) }
                 <i>{{ count($this->exceptions) }}</i>
                 { /if }
                 Exceptions
-            </a>
-            <a href="" data-target="#gdbg-tab-3">Timeline</a>
-            <a href="" data-target="#gdbg-tab-4">
+            </button>
+            <button data-target="#gdbg-tab-3">Timeline</button>
+            <button data-target="#gdbg-tab-4">
                 <span class="gdbg-status-code gdbg-status-code-{{ $this->method_type }}">{{ $this->request_method }}</span>
                 Request
-            </a>
-            <a href="" data-target="#gdbg-tab-5">Headers</a>
-            <a href="" data-target="#gdbg-tab-6">
+            </button>
+            <button data-target="#gdbg-tab-5">Headers</button>
+            <button data-target="#gdbg-tab-6">
                 <span class="gdbg-status-code gdbg-status-code-{{ $this->status_type }}">{{ $this->status }}</span>
                 Response
-            </a>
-            <a href="" data-target="#gdbg-tab-7">Session</a>
-            <a href="" data-target="#gdbg-tab-8">Cookies</a>
-            <a href="" data-target="#gdbg-tab-9">Application</a>
-            <a href="" class="gdbg-close">✖️</a>
+            </button>
+            <button data-target="#gdbg-tab-7">Session</button>
+            <button data-target="#gdbg-tab-8">Cookies</button>
+            <button data-target="#gdbg-tab-9">Application</button>
+            <button class="gdbg-close" title="Close Debug Bar">✖️</button>
         </div>
 
         <div class="gdbg-content">
@@ -67,7 +67,7 @@
                         <td class="gdbg-message">
                             🚫 <strong>{{ $e['exception']->getMessage() }}</strong> on file <strong>{{ $e['exception']->getFile() }}</strong> at line <strong>{{ $e['exception']->getLine() }}.</strong>
                             <br>
-                            <a href="" class="gdbg-trace-toggle">See trace ▼</a>
+                            <button class="gdbg-trace-toggle">See trace ▼</button>
                             <div class="gdbg-exception-trace">
                                 {{!! nl2br($e['exception']->getTraceAsString()) !!}}
                             </div>
@@ -79,13 +79,23 @@
 
             <div class="gdbg-tab" id="gdbg-tab-3">
                 <table cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td class="gdbg-data-key" title="Total Request Time">
+                            Request Time (100%)
+                        </td>
+                        <td class="gdbg-timer-progress" title="Total Request Time">
+                            <div title="Total Request Time" class="gdbg-timer-bar gdbg-timer-bar-request" style="--gdbg-bar-width: 100%">
+                                {{ $this->application['Request Time'] }}
+                            </div>
+                        </td>
+                    </tr>
                     { foreach($this->timers as $name => $value) }
                     <tr>
-                        <td class="gdbg-data-key">
-                            {{ $name }}
+                        <td class="gdbg-data-key" title="{{ $value['description'] }}">
+                            {{ $name }} ({{ $value['size'] }})
                         </td>
-                        <td class="gdbg-timer-progress">
-                            <div class="gdbg-timer-bar" style="--gdbg-bar-width: {{ $value['size'] }}">
+                        <td class="gdbg-timer-progress" title="{{ $value['description'] }}">
+                            <div title="{{ $value['description'] }}" class="gdbg-timer-bar" style="--gdbg-bar-width: {{ $value['size'] }}">
                                 {{ $value['duration_string'] }}
                             </div>
                         </td>

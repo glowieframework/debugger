@@ -1,16 +1,19 @@
 .gdbg {
     * {
+        box-sizing: border-box;
         margin: 0;
-        font-style: normal;
         padding: 0;
+        font-style: normal;
         font-family: 'Segoe UI', 'Tahoma', sans-serif;
+        font-weight: normal;
         font-size: 16px;
+        line-height: initial;
         color: black;
         background: none;
-        font-weight: normal;
         border: none;
-        line-height: initial;
         text-decoration: none;
+        outline: none;
+        appearance: none;
     }
 
     &-container {
@@ -40,6 +43,7 @@
         border: 1px solid #78909c;
         border-bottom: none;
         border-radius: 5px 5px 0 0;
+        cursor: pointer;
         font-size: 15px;
         font-weight: 500;
 
@@ -67,7 +71,7 @@
             cursor: row-resize;
         }
 
-        a {
+        button {
             padding: 5px 15px;
             font-size: 14px;
             font-weight: 500;
@@ -75,6 +79,7 @@
             border: 1px solid #b0bec5;
             border-top: none;
             border-bottom: none;
+            cursor: pointer;
 
             &.gdbg-close {
                 margin-left: auto;
@@ -219,6 +224,10 @@
                 color: white;
                 padding: 2px;
                 min-width: max-content;
+
+                &-request {
+                    background-color: #4caf50;
+                }
             }
 
             .gdbg-data-value,
