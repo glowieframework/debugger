@@ -4,7 +4,7 @@
 </style>
 
 <div class="gdbg">
-    <button class="gdbg-toggler" title="Open Debug Bar">Debugger ▲</button>
+    <button class="gdbg-toggler" title="Show Debug Bar">Debugger ▲</button>
     <div class="gdbg-container">
         <div class="gdbg-menu">
             <button data-target="#gdbg-tab-1">
@@ -32,7 +32,7 @@
             <button data-target="#gdbg-tab-7">Session</button>
             <button data-target="#gdbg-tab-8">Cookies</button>
             <button data-target="#gdbg-tab-9">Application</button>
-            <button class="gdbg-close" title="Close Debug Bar">✖️</button>
+            <button class="gdbg-close" title="Hide Debug Bar">✖️</button>
         </div>
 
         <div class="gdbg-content">
@@ -67,7 +67,7 @@
                         <td class="gdbg-message">
                             🚫 <strong>{{ $e['exception']->getMessage() }}</strong> on file <strong>{{ $e['exception']->getFile() }}</strong> at line <strong>{{ $e['exception']->getLine() }}.</strong>
                             <br>
-                            <button class="gdbg-trace-toggle">See trace ▼</button>
+                            <button class="gdbg-trace-toggle">View trace ▼</button>
                             <div class="gdbg-exception-trace">
                                 {{!! nl2br($e['exception']->getTraceAsString()) !!}}
                             </div>
@@ -89,14 +89,14 @@
                             </div>
                         </td>
                     </tr>
-                    { foreach($this->timers as $name => $value) }
+                    { foreach($this->timers as $name => $item) }
                     <tr>
-                        <td class="gdbg-data-key" title="{{ $value['description'] }}">
-                            {{ $name }} ({{ $value['size'] }})
+                        <td class="gdbg-data-key" title="{{ $item['description'] }}">
+                            {{ $name }} ({{ $item['size'] }})
                         </td>
-                        <td class="gdbg-timer-progress" title="{{ $value['description'] }}">
-                            <div title="{{ $value['description'] }}" class="gdbg-timer-bar" style="--gdbg-bar-width: {{ $value['size'] }}">
-                                {{ $value['duration_string'] }}
+                        <td class="gdbg-timer-progress" title="{{ $item['description'] }}">
+                            <div title="{{ $item['description'] }}" class="gdbg-timer-bar" style="--gdbg-bar-width: {{ $item['size'] }}">
+                                {{ $item['duration_string'] }}
                             </div>
                         </td>
                     </tr>
@@ -142,7 +142,7 @@
                     { foreach($this->session as $key => $value) }
                     <tr>
                         <td class="gdbg-data-key">{{ $key }}</td>
-                        <td class="gdbg-data-value">{{ json_encode($value) }}</td>
+                        <td class="gdbg-data-value">{ json($value) }</td>
                     </tr>
                     { /foreach }
                 </table>
@@ -153,7 +153,7 @@
                     { foreach($this->cookies as $key => $value) }
                     <tr>
                         <td class="gdbg-data-key">{{ $key }}</td>
-                        <td class="gdbg-data-value">{{ json_encode($value) }}</td>
+                        <td class="gdbg-data-value">{ json($value) }</td>
                     </tr>
                     { /foreach }
                 </table>
