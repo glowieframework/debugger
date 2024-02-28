@@ -8,6 +8,7 @@
     use Glowie\Core\View\Skeltch;
     use Glowie\Core\View\View;
     use Glowie\Core\View\Buffer;
+    use Glowie\Core\Database\Kraken;
     use Util;
     use Env;
     use Throwable;
@@ -24,6 +25,12 @@
      * @link https://eugabrielsilva.tk/glowie
      */
     class Debugger extends Plugin{
+
+        /**
+         * Enable or disable Debugger.
+         * @var bool
+         */
+        private static $isEnabled = true;
 
         /**
          * Checks if Debugger is already loaded.
@@ -50,10 +57,27 @@
         private static $timers = [];
 
         /**
+         * SQL queries.
+         * @var array
+         */
+        private static $queries = [];
+
+        /**
          * Initializes the plugin.
          */
         public function register(){
+            // Register Skeltch directive
             Skeltch::directive('debugger', '<?php \Glowie\Plugins\Debugger\Debugger::render(); ?>');
+
+            // Register query listener
+            Kraken::listen(function($query, $bindings, $time, $status){
+                self::$queries[] = [
+                    'query' => $query,
+                    'bindings' => $bindings,
+                    'time' => self::parseTime($time),
+                    'status' => $status
+                ];
+            });
         }
 
         /**
@@ -62,7 +86,7 @@
         public static function render(){
             // Check if debug mode is enabled and if the debugger was not already loaded
             $debugMode = filter_var(Env::get('APP_DEBUG', false), FILTER_VALIDATE_BOOLEAN);
-            if(self::$isLoaded || !$debugMode) return;
+            if(!$debugMode || !self::$isEnabled || self::$isLoaded) return;
 
             // Order variables
             $request = Rails::getRequest()->toArray();
@@ -89,6 +113,7 @@
                 'response' => $response,
                 'session' => (new Session())->toArray(),
                 'cookies' => (new Cookies())->toArray(),
+                'queries' => self::$queries,
                 'timers' => self::parseTimers(),
                 'application' => self::parseAppInfo()
             ], true, true);
@@ -96,6 +121,20 @@
             // Return content
             self::$isLoaded = true;
             echo $view->getContent();
+        }
+
+        /**
+         * Enables the debug bar rendering.
+         */
+        public static function enable(){
+            self::$isEnabled = true;
+        }
+
+        /**
+         * Disables the debug bar rendering.
+         */
+        public static function disable(){
+            self::$isEnabled = false;
         }
 
         /**
@@ -208,11 +247,13 @@
          * @param string $name Timer name.
          * @param Closure $callback Function to run.
          * @param string|null $description (Optional) Timer description.
+         * @return mixed Returns the function result.
          */
         public static function measure(string $name, Closure $callback, ?string $description = null){
             self::startTimer($name, $description);
-            call_user_func($callback);
+            $result = call_user_func($callback);
             self::stopTimer($name);
+            return $result;
         }
 
         /**

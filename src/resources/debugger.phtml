@@ -31,8 +31,14 @@
             </button>
             <button data-target="#gdbg-tab-7">Session</button>
             <button data-target="#gdbg-tab-8">Cookies</button>
-            <button data-target="#gdbg-tab-9">Application</button>
-            <button class="gdbg-close" title="Hide Debug Bar">✖️</button>
+            <button data-target="#gdbg-tab-9">
+                { if(count($this->queries) > 0) }
+                <i>{{ count($this->queries) }}</i>
+                { /if }
+                Queries
+            </button>
+            <button data-target="#gdbg-tab-10">Application</button>
+            <button class="gdbg-close" title="Hide Debug Bar">▼</button>
         </div>
 
         <div class="gdbg-content">
@@ -160,6 +166,26 @@
             </div>
 
             <div class="gdbg-tab" id="gdbg-tab-9">
+                <table cellspacing="0" cellpadding="0">
+                    { foreach($this->queries as $query) }
+                    <tr class="gdbg-row-dump">
+                        <td class="gdbg-message-time">
+                            { if($query['status']) }
+                            ✅
+                            { else }
+                            ❌
+                            { /if }
+                            {{ $query['time'] }}
+                        </td>
+                        <td class="gdbg-message">
+                            <span title="Total length: {{ strlen($query['query']) }}" class="gdbg-expandable-value">{{ $query['query'] }}</span>
+                        </td>
+                    </tr>
+                    { /foreach }
+                </table>
+            </div>
+
+            <div class="gdbg-tab" id="gdbg-tab-10">
                 <table cellspacing="0" cellpadding="0">
                     { foreach($this->application as $key => $value) }
                     <tr>
