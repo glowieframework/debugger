@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleTab(currentTab);
     document.querySelector('.gdbg .gdbg-menu button[data-target="' + currentTab + '"]').classList.add('gdbg-menu-active');
 
-    // -- Trace toggler
+    // -- Trace/params toggler
     const togglers = document.querySelectorAll('.gdbg .gdbg-trace-toggle');
 
     togglers.forEach(a => {

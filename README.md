@@ -10,6 +10,8 @@ Debugger is a plugin for [Glowie Framework](https://github.com/glowieframework/g
 - Measure long operations to a timeline and improve your app performance
 - Inspect Request and Response variables and headers
 - Inspect Session and Cookies data
+- Log SQL queries, bindings and durations
+- Inspect rendered views and parameters
 - Inspect application info, routes, memory usage, software versions, render time and more
 
 ## Installation

@@ -114,6 +114,7 @@
                 'session' => (new Session())->toArray(),
                 'cookies' => (new Cookies())->toArray(),
                 'queries' => self::$queries,
+                'views' => View::$_renderedViews,
                 'timers' => self::parseTimers(),
                 'application' => self::parseAppInfo()
             ], true, true);
@@ -309,6 +310,7 @@
             $route = Rails::getRoute(Rails::getCurrentRoute());
             return [
                 'Route' => !Util::isEmpty($route['name']) ? $route['name'] : '/',
+                'Group' => Rails::getCurrentGroup() ?? '-',
                 'Controller' => $route['controller'],
                 'Action' => $route['action'] . '()',
                 'Middlewares' => !empty($route['middleware']) ? implode(', ', $route['middleware']) : '-',

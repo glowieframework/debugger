@@ -37,7 +37,13 @@
                 { /if }
                 Queries
             </button>
-            <button data-target="#gdbg-tab-10">Application</button>
+            <button data-target="#gdbg-tab-10">
+                { if(count($this->views) > 0) }
+                <i>{{ count($this->views) }}</i>
+                { /if }
+                Views
+            </button>
+            <button data-target="#gdbg-tab-11">Application</button>
             <button class="gdbg-close" title="Hide Debug Bar">▼</button>
         </div>
 
@@ -178,7 +184,7 @@
                             {{ $query['time'] }}
                         </td>
                         <td class="gdbg-message">
-                            <span title="Total length: {{ strlen($query['query']) }}" class="gdbg-expandable-value">{{ $query['query'] }}</span>
+                            <span title="Total length: {{ strlen($query['query']) }}" class="gdbg-expandable-value gdbg-sql">{{ $query['query'] }}</span>
                         </td>
                     </tr>
                     { /foreach }
@@ -186,6 +192,26 @@
             </div>
 
             <div class="gdbg-tab" id="gdbg-tab-10">
+                <table cellspacing="0" cellpadding="0">
+                    { foreach($this->views as $view) }
+                    <tr>
+                        <td class="gdbg-message">
+                            {{ $view['file'] }}
+                            { if(count($view['params']) > 0) }
+                            <button class="gdbg-trace-toggle gdbg-params-toggle">({{ count($view['params']) }}) ▼</button>
+                            <div class="gdbg-exception-trace gdbg-params">
+                                { foreach($view['params'] as $key => $param) }
+                                {{ $key }}. {{ $param }}<br>
+                                { /foreach }
+                            </div>
+                            { /if }
+                        </td>
+                    </tr>
+                    { /foreach }
+                </table>
+            </div>
+
+            <div class="gdbg-tab" id="gdbg-tab-11">
                 <table cellspacing="0" cellpadding="0">
                     { foreach($this->application as $key => $value) }
                     <tr>

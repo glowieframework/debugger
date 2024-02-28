@@ -26,6 +26,17 @@
         flex-flow: column;
         display: none;
 
+        &:after {
+            content: '';
+            top: -5px;
+            background-color: #b0bec5;
+            position: absolute;
+            left: 0;
+            height: 5px;
+            width: 100%;
+            cursor: row-resize;
+        }
+
         &-show {
             display: flex;
         }
@@ -54,24 +65,14 @@
 
     &-menu {
         display: flex;
-        flex-wrap: wrap;
         background-color: #cfd8dc;
         border-bottom: 1px solid #b0bec5;
         user-select: none;
-        position: relative;
-
-        &:after {
-            content: '';
-            top: -5px;
-            background-color: #b0bec5;
-            position: absolute;
-            left: 0;
-            height: 5px;
-            width: 100%;
-            cursor: row-resize;
-        }
+        width: 100%;
+        overflow: auto;
 
         button {
+            flex-shrink: 0;
             padding: 5px 15px;
             font-size: 14px;
             font-weight: 500;
@@ -153,7 +154,7 @@
     }
 
     &-content {
-        overflow-y: auto;
+        overflow: auto;
         height: 100%;
         flex: 1;
 
@@ -173,6 +174,11 @@
             font-weight: 500;
             padding: 2px 4px;
             margin-top: 5px;
+            cursor: pointer;
+        }
+
+        .gdbg-params-toggle {
+            background-color: #546e7a;
         }
 
         table {
@@ -251,11 +257,16 @@
                 cursor: pointer;
 
                 &-show {
-                    overflow: visible;
+                    overflow: auto;
                     display: block;
-                    -webkit-line-clamp: unset;
-                    text-overflow: unset;
+                    -webkit-line-clamp: initial;
+                    -webkit-box-orient: initial;
+                    text-overflow: initial;
                     white-space: pre;
+
+                    &.gdbg-sql {
+                        white-space: initial;
+                    }
                 }
             }
 
@@ -281,6 +292,12 @@
                 &-show {
                     display: block;
                 }
+            }
+
+            .gdbg-params {
+                font-size: 13px;
+                font-family: monospace;
+                color: #546e7a;
             }
 
             .gdbg-row-error {
