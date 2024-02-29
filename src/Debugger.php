@@ -88,31 +88,21 @@
             $debugMode = filter_var(Env::get('APP_DEBUG', false), FILTER_VALIDATE_BOOLEAN);
             if(!$debugMode || !self::$isEnabled || self::$isLoaded) return;
 
-            // Order variables
-            $request = Rails::getRequest()->toArray();
-            ksort($request);
-
-            $headers = Rails::getRequest()->getHeaders();
-            ksort($headers);
-
-            $response = Rails::getResponse()->getHeaders();
-            ksort($response);
-
             // Inject view
             $view = new View(__DIR__ . '/resources/debugger.phtml', [
                 'css_path' => __DIR__ . '/resources/style.min.css',
                 'js_path' => __DIR__ . '/resources/script.min.js',
                 'messages' => self::$messages,
                 'exceptions' => self::$exceptions,
-                'request' => $request,
+                'request' => Rails::getRequest()->toCollection()->sortKeys(),
                 'request_method' => Rails::getRequest()->getMethod(),
                 'method_type' => self::parseMethod(Rails::getRequest()->getMethod()),
                 'status' => Rails::getResponse()->getStatusCode(),
                 'status_type' => self::parseStatusCode(Rails::getResponse()->getStatusCode()),
-                'headers' => $headers,
-                'response' => $response,
-                'session' => (new Session())->toArray(),
-                'cookies' => (new Cookies())->toArray(),
+                'headers' => Rails::getRequest()->getHeaders()->sortKeys(),
+                'response' => Rails::getResponse()->getHeaders()->sortKeys(),
+                'session' => (new Session())->toCollection()->sortKeys(),
+                'cookies' => (new Cookies())->toCollection()->sortKeys(),
                 'queries' => self::$queries,
                 'views' => View::getRendered(),
                 'timers' => self::parseTimers(),
