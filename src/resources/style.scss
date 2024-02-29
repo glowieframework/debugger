@@ -71,6 +71,18 @@
         width: 100%;
         overflow: auto;
 
+        &::-webkit-scrollbar {
+            height: 7px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #546e7a;
+        }
+
         button {
             flex-shrink: 0;
             padding: 5px 15px;
@@ -157,6 +169,18 @@
         overflow: auto;
         height: 100%;
         flex: 1;
+
+        &::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #546e7a;
+        }
 
         .gdbg-tab {
             display: none;
@@ -262,11 +286,7 @@
                     -webkit-line-clamp: initial;
                     -webkit-box-orient: initial;
                     text-overflow: initial;
-                    white-space: pre;
-
-                    &.gdbg-sql {
-                        white-space: initial;
-                    }
+                    white-space: pre-wrap;
                 }
             }
 

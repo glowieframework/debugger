@@ -8,7 +8,7 @@
     use Glowie\Core\View\Skeltch;
     use Glowie\Core\View\View;
     use Glowie\Core\View\Buffer;
-    use Glowie\Core\Database\Kraken;
+    use Glowie\Core\Database\Factory;
     use Util;
     use Env;
     use Throwable;
@@ -70,10 +70,10 @@
             Skeltch::directive('debugger', '<?php \Glowie\Plugins\Debugger\Debugger::render(); ?>');
 
             // Register query listener
-            Kraken::listen(function($query, $bindings, $time, $status){
+            Factory::listen(function($query, $bindings, $time, $status){
                 self::$queries[] = [
                     'query' => $query,
-                    'bindings' => $bindings,
+                    'bindings' => self::parseBindings($bindings),
                     'time' => self::parseTime($time),
                     'status' => $status
                 ];
@@ -114,7 +114,7 @@
                 'session' => (new Session())->toArray(),
                 'cookies' => (new Cookies())->toArray(),
                 'queries' => self::$queries,
-                'views' => View::$_renderedViews,
+                'views' => View::getRendered(),
                 'timers' => self::parseTimers(),
                 'application' => self::parseAppInfo()
             ], true, true);
@@ -389,6 +389,18 @@
                 default:
                     return 'white';
             }
+        }
+
+        /**
+         * Parses query bindings array to string.
+         * @param array $bindings Bindings array.
+         * @return string Returns the parsed string.
+         */
+        private static function parseBindings(array $bindings){
+            if(empty($bindings)) return '';
+            $result = ['Bindings:'];
+            foreach($bindings as $key => $item) $result[] = $key . '. ' . Util::limitString($item, 100);
+            return implode("\n", $result);
         }
     }
 

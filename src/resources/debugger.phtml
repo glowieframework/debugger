@@ -184,7 +184,7 @@
                             {{ $query['time'] }}
                         </td>
                         <td class="gdbg-message">
-                            <span title="Total length: {{ strlen($query['query']) }}" class="gdbg-expandable-value gdbg-sql">{{ $query['query'] }}</span>
+                            <span title="{{ $query['bindings'] }}" class="gdbg-expandable-value">{{ $query['query'] }}</span>
                         </td>
                     </tr>
                     { /foreach }

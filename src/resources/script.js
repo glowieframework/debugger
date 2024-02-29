@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const debugBar = document.querySelector('.gdbg .gdbg-container');
     if(!debugBar) return;
 
-    // -- Display debugger toggler
+    // -- Hide/show debug bar
     const toggler = document.querySelector('.gdbg-toggler');
     if(!window.localStorage.getItem('gdbg-hide')) {
         debugBar.classList.add('gdbg-container-show');
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.localStorage.setItem('gdbg-hide', true);
     });
 
-    // -- Resizer
+    // -- Resize debug bar
     const panelHeight = window.localStorage.getItem('gdbg-height') || 200;
     debugBar.style.height = panelHeight + 'px';
 
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // -- Expandable toggler
+    // -- Expandable value toggler
     const expandables = document.querySelectorAll('.gdbg-expandable-value');
 
     expandables.forEach(a => {
