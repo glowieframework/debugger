@@ -204,6 +204,13 @@
         }
 
         /**
+         * Clears the queries.
+         */
+        public static function clearQueries(){
+            self::$queries = [];
+        }
+
+        /**
          * Starts a timer measurement.
          * @param string $name Timer name.
          * @param string|null $description (Optional) Timer description.

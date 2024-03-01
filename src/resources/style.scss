@@ -14,6 +14,8 @@
         text-decoration: none;
         outline: none;
         appearance: none;
+        position: static;
+        z-index: initial;
     }
 
     &-container {
@@ -26,13 +28,13 @@
         flex-flow: column;
         display: none;
 
-        &:after {
-            content: '';
-            top: -5px;
+        .gdbg-resize-handle {
+            top: -6px;
+            display: block;
             background-color: #b0bec5;
             position: absolute;
             left: 0;
-            height: 5px;
+            height: 6px;
             width: 100%;
             cursor: row-resize;
         }

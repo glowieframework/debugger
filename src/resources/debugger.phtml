@@ -6,6 +6,7 @@
 <div class="gdbg">
     <button class="gdbg-toggler" title="Show Debug Bar">Debugger ▲</button>
     <div class="gdbg-container">
+        <button class="gdbg-resize-handle"></button>
         <div class="gdbg-menu">
             <button data-target="#gdbg-tab-1">
                 { if(count($this->messages) > 0) }
@@ -79,7 +80,7 @@
                         <td class="gdbg-message">
                             🚫 <strong>{{ $e['exception']->getMessage() }}</strong> on file <strong>{{ $e['exception']->getFile() }}</strong> at line <strong>{{ $e['exception']->getLine() }}.</strong>
                             <br>
-                            <button class="gdbg-trace-toggle">View trace ▼</button>
+                            <button class="gdbg-trace-toggle" title="Show/hide stack trace">View trace ▼</button>
                             <div class="gdbg-exception-trace">
                                 {{!! nl2br($e['exception']->getTraceAsString()) !!}}
                             </div>
@@ -198,7 +199,7 @@
                         <td class="gdbg-message">
                             {{ $view['file'] }}
                             { if(count($view['params']) > 0) }
-                            <button class="gdbg-trace-toggle gdbg-params-toggle">({{ count($view['params']) }}) ▼</button>
+                            <button title="Show/hide params" class="gdbg-trace-toggle gdbg-params-toggle">({{ count($view['params']) }}) ▼</button>
                             <div class="gdbg-exception-trace gdbg-params">
                                 { foreach($view['params'] as $key => $param) }
                                 {{ $key }}. {{ $param }}<br>

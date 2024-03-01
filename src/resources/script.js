@@ -27,28 +27,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // -- Resize debug bar
+    const resizeHandle = document.querySelector('.gdbg .gdbg-resize-handle');
     const panelHeight = window.localStorage.getItem('gdbg-height') || 200;
     debugBar.style.height = panelHeight + 'px';
 
     const minHeight = 100;
-    const handleHeight = 5;
+    const maxHeight = window.innerHeight - 20;
+
     let mousePosition;
 
     function resize(e) {
         let dx = mousePosition - e.y;
         mousePosition = e.y;
         let size = (parseInt(getComputedStyle(debugBar, '').height) + dx);
-        if(size >= minHeight && size <= (window.innerHeight - 20)) {
+        if(size >= minHeight && size <= maxHeight) {
             debugBar.style.height = size + 'px';
             window.localStorage.setItem('gdbg-height', size);
         }
     }
 
-    debugBar.addEventListener('mousedown', function(e) {
-        if(e.offsetY < handleHeight) {
-            mousePosition = e.y;
-            document.addEventListener('mousemove', resize, false);
-        }
+    resizeHandle.addEventListener('mousedown', function(e) {
+        mousePosition = e.y;
+        document.addEventListener('mousemove', resize, false);
     }, false);
 
     document.addEventListener('mouseup', function() {
