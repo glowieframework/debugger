@@ -10,9 +10,9 @@ Debugger is a plugin for [Glowie Framework](https://github.com/glowieframework/g
 - Measure long operations to a timeline and improve your app performance
 - Inspect Request and Response variables and headers
 - Inspect Session and Cookies data
-- Log SQL queries, bindings and durations
-- Inspect rendered views and parameters
-- Inspect application info, routes, memory usage, software versions, render time and more
+- Log SQL queries, bindings and query durations
+- Inspect rendered views and its parameters
+- Inspect application info, routes, memory usage, software versions, request time and more
 
 ## Installation
 Install in your Glowie project using Composer:
@@ -54,6 +54,19 @@ If you are not using Skeltch templating engine, you can also use the default PHP
 ```env
 APP_DEBUG=true
 ```
+
+### Enabling or disabling the debug bar at runtime
+To enable or disable the rendering of the debug bar at runtime, use:
+
+```php
+use Glowie\Plugins\Debugger\Debugger;
+
+Debugger::enable();
+
+Debugger::disable();
+```
+
+>**Note:** The `enable()` method will not work if the debug mode is disabled in your app env.
 
 ## Usage
 
@@ -112,7 +125,9 @@ Debugger::clear(); // Clears the console
 Debugger::clearExceptions(); // Clears the exceptions
 
 Debugger::clearTimers(); // Clears the timers
+
+Debugger::clearQueries(); // Clears the queries
 ```
 
 ## Credits
-Debugger and Glowie are currently being developed by [Gabriel Silva](https://eugabrielsilva.tk).
+Debugger and Glowie are currently being developed by [Gabriel Silva](https://gabrielsilva.dev.br).

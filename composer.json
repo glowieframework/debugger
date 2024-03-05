@@ -2,7 +2,7 @@
     "name": "glowieframework/debugger",
     "description": "Glowie debug bar plugin",
     "license": "MIT",
-    "homepage": "https://eugabrielsilva.tk/glowie/debugger",
+    "homepage": "https://gabrielsilva.dev.br/glowie/debugger",
     "support": {
         "issues": "https://github.com/glowieframework/debugger/issues",
         "source": "https://github.com/glowieframework/debugger"
@@ -10,8 +10,8 @@
     "authors": [
         {
             "name": "Gabriel Silva",
-            "email": "glowie@eugabrielsilva.tk",
-            "homepage": "https://eugabrielsilva.tk/glowie"
+            "email": "glowie@gabrielsilva.dev.br",
+            "homepage": "https://gabrielsilva.dev.br/glowie"
         }
     ],
     "require-dev": {
