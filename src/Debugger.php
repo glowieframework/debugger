@@ -94,6 +94,7 @@
                 'js_path' => __DIR__ . '/resources/script.min.js',
                 'messages' => self::$messages,
                 'exceptions' => self::$exceptions,
+                'params' => Rails::getParams()->toArray(),
                 'request' => Rails::getRequest()->toCollection()->sortKeys(),
                 'request_method' => Rails::getRequest()->getMethod(),
                 'method_type' => self::parseMethod(Rails::getRequest()->getMethod()),

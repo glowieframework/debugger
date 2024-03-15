@@ -241,7 +241,10 @@
                 font-size: 14px;
                 color: dimgray;
                 vertical-align: top;
-                user-select: all;
+            }
+
+            .gdbg-valign {
+                vertical-align: middle;
             }
 
             .gdbg-timer-progress {
@@ -269,7 +272,6 @@
                 font-family: monospace;
                 max-width: 100%;
                 word-break: break-all;
-                user-select: all;
             }
 
             .gdbg-expandable-value {
@@ -279,7 +281,6 @@
                 -webkit-box-orient: vertical;
                 text-overflow: ellipsis;
                 color: #7b7b7b;
-                user-select: text;
                 cursor: pointer;
 
                 &-show {

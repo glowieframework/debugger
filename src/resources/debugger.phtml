@@ -155,7 +155,13 @@
                     { foreach($this->session as $key => $value) }
                     <tr>
                         <td class="gdbg-data-key">{{ $key }}</td>
-                        <td class="gdbg-data-value">{ json($value) }</td>
+                        <td class="gdbg-data-value">
+                            { if(is_object($value) || is_array($value)) }
+                            <span class="gdbg-expandable-value">{{ var_dump($value) }}</span>
+                            { else }
+                            {{ $value }}
+                            { /if }
+                        </td>
                     </tr>
                     { /foreach }
                 </table>
@@ -166,7 +172,13 @@
                     { foreach($this->cookies as $key => $value) }
                     <tr>
                         <td class="gdbg-data-key">{{ $key }}</td>
-                        <td class="gdbg-data-value">{ json($value) }</td>
+                        <td class="gdbg-data-value">
+                            { if(is_object($value) || is_array($value)) }
+                            <span class="gdbg-expandable-value">{{ var_dump($value) }}</span>
+                            { else }
+                            {{ $value }}
+                            { /if }
+                        </td>
                     </tr>
                     { /foreach }
                 </table>
@@ -194,15 +206,16 @@
 
             <div class="gdbg-tab" id="gdbg-tab-10">
                 <table cellspacing="0" cellpadding="0">
-                    { foreach($this->views as $view) }
+                    { foreach($this->views as $key => $view) }
                     <tr>
+                        <td class="gdbg-data-key gdbg-valign">{{ $key }}</td>
                         <td class="gdbg-message">
                             {{ $view['file'] }}
                             { if(count($view['params']) > 0) }
                             <button title="Show/hide params" class="gdbg-trace-toggle gdbg-params-toggle">({{ count($view['params']) }}) ▼</button>
                             <div class="gdbg-exception-trace gdbg-params">
                                 { foreach($view['params'] as $key => $param) }
-                                {{ $key }}. {{ $param }}<br>
+                                {{ $key }} => {{ $param }}<br>
                                 { /foreach }
                             </div>
                             { /if }
@@ -216,8 +229,18 @@
                 <table cellspacing="0" cellpadding="0">
                     { foreach($this->application as $key => $value) }
                     <tr>
-                        <td class="gdbg-data-key">{{ $key }}</td>
-                        <td class="gdbg-data-value">{{ $value }}</td>
+                        <td class="gdbg-data-key gdbg-valign">{{ $key }}</td>
+                        <td class="gdbg-data-value">
+                            {{ $value }}
+                            { if($key == 'Route' && count($this->params) > 0) }
+                            <button title="Show/hide params" class="gdbg-trace-toggle gdbg-params-toggle">({{ count($this->params) }}) ▼</button>
+                            <div class="gdbg-exception-trace gdbg-params">
+                                { foreach($this->params as $k => $param) }
+                                {{ $k }} => {{ $param }}<br>
+                                { /foreach }
+                            </div>
+                            { /if }
+                        </td>
                     </tr>
                     { /foreach }
                 </table>
