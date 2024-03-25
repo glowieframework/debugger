@@ -307,10 +307,10 @@
         private static function parseAppInfo(){
             $route = Rails::getRoute(Rails::getCurrentRoute());
             return [
-                'Route' => !Util::isEmpty($route['name']) ? $route['name'] : '/',
+                'Route' => !empty($route['name']) ? $route['name'] : '/',
                 'Group' => Rails::getCurrentGroup() ?? '-',
-                'Controller' => $route['controller'],
-                'Action' => $route['action'] . '()',
+                'Controller' => $route['controller'] ?? '-',
+                'Action' => !empty($route['action']) ? $route['action'] . '()' : '-',
                 'Middlewares' => !empty($route['middleware']) ? implode(', ', $route['middleware']) : '-',
                 'PHP Version' => phpversion(),
                 'Glowie Version' => Util::getVersion(),
