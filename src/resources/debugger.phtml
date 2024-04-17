@@ -187,7 +187,7 @@
             <div class="gdbg-tab" id="gdbg-tab-9">
                 <table cellspacing="0" cellpadding="0">
                     { foreach($this->queries as $query) }
-                    <tr class="gdbg-row-dump">
+                    <tr class="gdbg-row-dump {{ !$query['status'] ? 'gdbg-row-error' : '' }}">
                         <td class="gdbg-message-time">
                             { if($query['status']) }
                             ✅

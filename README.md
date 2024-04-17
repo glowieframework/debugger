@@ -77,6 +77,8 @@ To send messages to the console window, use any of the following methods:
 use Glowie\Plugins\Debugger\Debugger;
 
 Debugger::log('Hello world!'); // Prints an info message
+// or
+Debugger::info('Hello world!');
 
 Debugger::error('Something went wrong...'); // Prints an error message
 
