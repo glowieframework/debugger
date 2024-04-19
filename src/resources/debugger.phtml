@@ -78,8 +78,8 @@
                             {{ $e['time'] }}
                         </td>
                         <td class="gdbg-message">
-                            🚫 <strong>{{ $e['exception']->getMessage() }}</strong> on file <strong>{{ $e['exception']->getFile() }}</strong> at line <strong>{{ $e['exception']->getLine() }}.</strong>
-                            <br>
+                            🚫 <strong>{{ Util::classname($e['exception']) }}</strong> on file <strong>{{ $e['exception']->getFile() }}</strong> at line <strong>{{ $e['exception']->getLine() }}.</strong>
+                            <br>{{ $e['exception']->getMessage() }}<br>
                             <button class="gdbg-trace-toggle" title="Show/hide stack trace">View trace ▼</button>
                             <div class="gdbg-exception-trace">
                                 {{!! nl2br($e['exception']->getTraceAsString()) !!}}
