@@ -1,18 +1,19 @@
 ## Debugger for Glowie
 Debugger is a plugin for [Glowie Framework](https://github.com/glowieframework/glowie) with a powerful debug bar for developers.
 
-<img style="width: 100%; max-width: 600px;" src="https://imgur.com/ZHP5ENC.png" alt="Debugger">
+<img style="width: 100%; max-width: 600px;" src="https://i.imgur.com/mfcu69M.png" alt="Debugger">
 
 ## Features
 - Beautiful and simple debug bar with zero configuration
-- Print messages, warnings, errors and variables to a console window
+- Print and filter messages, warnings, errors and variables to a console window
 - Catch and print exceptions and stack traces to the console
 - Measure long operations to a timeline and improve your app performance
 - Inspect Request and Response variables and headers
 - Inspect Session and Cookies data
 - Log SQL queries, bindings and query durations
-- Inspect rendered views and its parameters
+- Inspect rendered views, layouts and all its parameters
 - Inspect application info, routes, memory usage, software versions, request time and more
+- Automatic light and night mode themes
 
 ## Installation
 Install in your Glowie project using Composer:
@@ -66,7 +67,7 @@ Debugger::enable();
 Debugger::disable();
 ```
 
->**Note:** The `enable()` method will not work if the debug mode is disabled in your app env.
+>**Note:** The `enable()` method won't do anything if the debug mode is disabled in your app env.
 
 ## Usage
 

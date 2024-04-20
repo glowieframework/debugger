@@ -227,6 +227,68 @@
             &-active {
                 display: block;
             }
+
+            .gdbg-filter {
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                display: flex;
+                justify-content: flex-end;
+                gap: 5px;
+
+                button {
+                    background-color: white;
+                    font-size: 13px;
+                    border-radius: 3px;
+                    padding: 2px 5px;
+                    cursor: pointer;
+                    border: 1px solid gray;
+                    opacity: 0.4;
+
+                    &.gdbg-filter-active {
+                        opacity: 1;
+
+                        &:before {
+                            content: '☑️';
+                            margin-right: 5px;
+                        }
+                    }
+
+                    &.gdbg-filter-all {
+                        background-color: #4caf50;
+                        color: white;
+                        border-color: #388e3c;
+                    }
+
+                    &.gdbg-filter-error {
+                        background-color: #ef5350;
+                        border-color: #b71c1c;
+                        color: white;
+
+                        @include darkMode() {
+                            background-color: #4f2726;
+                            border-color: #991414;
+                        }
+                    }
+
+                    &.gdbg-filter-warning {
+                        background-color: #fff9c4;
+                        border-color: #fdd835;
+                        color: #f57f17;
+
+                        @include darkMode() {
+                            background-color: #7f7435;
+                            border-color: #a78d16;
+                            color: white;
+                        }
+                    }
+
+                    &.gdbg-filter-dump {
+                        color: white;
+                        background-color: gray;
+                    }
+                }
+            }
         }
 
         .gdbg-trace-toggle {
@@ -356,6 +418,10 @@
                 @include darkMode() {
                     color: #bababa;
                 }
+            }
+
+            .gdbg-row-hidden {
+                display: none;
             }
 
             .gdbg-row-error {

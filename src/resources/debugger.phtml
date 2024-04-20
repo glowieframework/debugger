@@ -52,7 +52,7 @@
             <div class="gdbg-tab" id="gdbg-tab-1">
                 <table cellspacing="0" cellpadding="0">
                     { foreach($this->messages as $message) }
-                    <tr class="gdbg-row-{{ $message['type'] }}">
+                    <tr class="gdbg-row-message gdbg-row-{{ $message['type'] }}">
                         <td class="gdbg-message-time">
                             {{ $message['time'] }}
                         </td>
@@ -68,6 +68,13 @@
                     </tr>
                     { /foreach }
                 </table>
+                <div class="gdbg-filter">
+                    <button class="gdbg-filter-all" data-target="all">ALL</button>
+                    <button class="gdbg-filter-info" data-target="gdbg-row-info">INFO</button>
+                    <button class="gdbg-filter-error" data-target="gdbg-row-error">ERROR</button>
+                    <button class="gdbg-filter-warning" data-target="gdbg-row-warning">WARNING</button>
+                    <button class="gdbg-filter-dump" data-target="gdbg-row-dump">DUMP</button>
+                </div>
             </div>
 
             <div class="gdbg-tab" id="gdbg-tab-2">

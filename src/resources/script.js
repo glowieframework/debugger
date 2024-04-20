@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-
     const debugBar = document.querySelector('.gdbg .gdbg-container');
     if(!debugBar) return;
 
@@ -9,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         debugBar.classList.add('gdbg-container-show');
     } else {
         toggler.classList.add('gdbg-toggler-show');
-    }
+    };
 
     toggler.addEventListener('click', e => {
         e.preventDefault();
@@ -43,8 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if(size >= minHeight && size <= maxHeight) {
             debugBar.style.height = size + 'px';
             window.localStorage.setItem('gdbg-height', size);
-        }
-    }
+        };
+    };
 
     resizeHandle.addEventListener('mousedown', function(e) {
         mousePosition = e.y;
@@ -74,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tabs.forEach(t => t.classList.remove('gdbg-tab-active'));
         menus.forEach(m => m.classList.remove('gdbg-menu-active'));
         document.querySelector(id).classList.add('gdbg-tab-active');
-    }
+    };
 
     toggleTab(currentTab);
     document.querySelector('.gdbg .gdbg-menu button[data-target="' + currentTab + '"]').classList.add('gdbg-menu-active');
@@ -90,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // -- Expandable value toggler
-    const expandables = document.querySelectorAll('.gdbg-expandable-value');
+    const expandables = document.querySelectorAll('.gdbg .gdbg-expandable-value');
 
     expandables.forEach(a => {
         a.addEventListener('click', e => {
@@ -98,4 +97,33 @@ document.addEventListener('DOMContentLoaded', () => {
             a.classList.toggle('gdbg-expandable-value-show');
         });
     });
+
+    // -- Console filtering
+    const filters = document.querySelectorAll('.gdbg .gdbg-filter button');
+    const messages = document.querySelectorAll('.gdbg .gdbg-row-message');
+    const currentFilter = window.localStorage.getItem('gdbg-filter') || 'all';
+
+    filters.forEach(a => {
+        a.addEventListener('click', e => {
+            let target = a.getAttribute('data-target');
+            e.preventDefault();
+            toggleFilter(target);
+            a.classList.add('gdbg-filter-active');
+            window.localStorage.setItem('gdbg-filter', target);
+        });
+    });
+
+    function toggleFilter(target) {
+        filters.forEach(f => f.classList.remove('gdbg-filter-active'));
+        messages.forEach(message => {
+            if(target == 'all' || message.classList.contains(target)) {
+                message.classList.remove('gdbg-row-hidden');
+            } else {
+                message.classList.add('gdbg-row-hidden');
+            };
+        });
+    };
+
+    toggleFilter(currentFilter);
+    document.querySelector('.gdbg .gdbg-filter button[data-target="' + currentFilter + '"]').classList.add('gdbg-filter-active');
 });
