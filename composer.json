@@ -15,7 +15,7 @@
         }
     ],
     "require-dev": {
-        "glowieframework/glowie-core": "^1.5"
+        "glowieframework/glowie-core": "^1.6"
     },
     "autoload": {
         "psr-4": {
