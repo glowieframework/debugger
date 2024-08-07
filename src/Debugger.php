@@ -65,6 +65,18 @@ class Debugger extends Plugin
     private static $queries = [];
 
     /**
+     * If stack block is started.
+     * @var bool
+     */
+    private static $stack = null;
+
+    /**
+     * Stacked data holder.
+     * @var array
+     */
+    private static $stackData = [];
+
+    /**
      * Initializes the plugin.
      */
     public function register()
@@ -92,12 +104,16 @@ class Debugger extends Plugin
         $debugMode = filter_var(Env::get('APP_DEBUG', false), FILTER_VALIDATE_BOOLEAN);
         if (!$debugMode || !self::$isEnabled || self::$isLoaded) return;
 
+        // Get session stack data
+        $session = new Session();
+        $stack = $session->getFlash('gdbg_stack');
+
         // Inject view
         $view = new View(__DIR__ . '/resources/debugger.phtml', [
             'css_path' => __DIR__ . '/resources/style.min.css',
             'js_path' => __DIR__ . '/resources/script.min.js',
-            'messages' => self::$messages,
-            'exceptions' => self::$exceptions,
+            'messages' => self::parseStack($stack['messages'] ?? null, self::$messages),
+            'exceptions' => self::parseStack($stack['exceptions'] ?? null, self::$exceptions),
             'params' => Rails::getParams()->toArray(),
             'request' => Rails::getRequest()->toCollection()->sortKeys(),
             'request_method' => Rails::getRequest()->getMethod(),
@@ -106,11 +122,11 @@ class Debugger extends Plugin
             'status_type' => self::parseStatusCode(Rails::getResponse()->getStatusCode()),
             'headers' => Rails::getRequest()->getHeaders()->sortKeys(),
             'response' => Rails::getResponse()->getHeaders()->sortKeys(),
-            'session' => (new Session())->toCollection()->sortKeys(),
+            'session' => $session->toCollection()->sortKeys(),
             'cookies' => (new Cookies())->toCollection()->sortKeys(),
             'queries' => self::$queries,
             'views' => View::getRendered(),
-            'timers' => self::parseTimers(),
+            'timers' => self::parseTimers($stack['timers'] ?? null),
             'application' => self::parseAppInfo()
         ], true, true);
 
@@ -189,10 +205,16 @@ class Debugger extends Plugin
      */
     public static function exception(Throwable $exception)
     {
-        self::$exceptions[] = [
+        $e = [
             'exception' => $exception,
             'time' => self::parseTime(self::now())
         ];
+
+        if (self::$stack) {
+            self::$stackData['exceptions'][] = $e;
+        } else {
+            self::$exceptions[] = $e;
+        }
     }
 
     /**
@@ -257,6 +279,8 @@ class Debugger extends Plugin
         self::$timers[$name]['end'] = $time;
         self::$timers[$name]['duration'] = $duration;
         self::$timers[$name]['duration_string'] = self::parseTime($duration);
+
+        if (self::$stack) self::$stackData['timers'][$name] = self::$timers[$name];
     }
 
     /**
@@ -275,27 +299,67 @@ class Debugger extends Plugin
     }
 
     /**
+     * Starts capturing messages for persisted logging.
+     */
+    public static function startCapture()
+    {
+        self::$stack = true;
+    }
+
+    /**
+     * Stops the capture of messages for persisted logging.
+     */
+    public static function stopCapture()
+    {
+        self::$stack = false;
+        (new Session())->setFlash('gdbg_stack', self::$stackData);
+        self::$stackData = [];
+    }
+
+    /**
      * Adds a message to the console list.
      * @param string $type Message type.
      * @param string $message Message text.
      */
     private static function addMessage(string $type, string $message)
     {
-        self::$messages[] = [
+        $msg = [
             'type' => $type,
             'time' =>  self::parseTime(self::now()),
             'text' => $message,
         ];
+
+        if (self::$stack) {
+            self::$stackData['messages'][] = $msg;
+        } else {
+            self::$messages[] = $msg;
+        }
+    }
+
+    /**
+     * Merges the stack data with the application data.
+     * @param array|null $stackData Data from session flash.
+     * @param array|null $appData Data from the application.
+     * @return array Returns the merged data.
+     */
+    private static function parseStack($stackData, $appData)
+    {
+        if (!$stackData) return $appData;
+        return array_merge($stackData, $appData);
     }
 
     /**
      * Parses the timers data.
+     * @param array|null $stackData Data from session flash.
      * @return array Returns the timers as an associative array.
      */
-    private static function parseTimers()
+    private static function parseTimers($stackData)
     {
+        // Get from stack first, if exists
+        $timers = self::parseStack($stackData, self::$timers);
+
         // Order timers from longest to shortest
-        $timers = Util::orderArray(self::$timers, 'duration', SORT_DESC);
+        $timers = Util::orderArray($timers, 'duration', SORT_DESC);
         $renderTime = self::now();
 
         if (!empty($timers)) {
