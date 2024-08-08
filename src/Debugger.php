@@ -68,7 +68,7 @@ class Debugger extends Plugin
      * If stack block is started.
      * @var bool
      */
-    private static $stack = null;
+    private static $stack = false;
 
     /**
      * Stacked data holder.
@@ -84,14 +84,27 @@ class Debugger extends Plugin
         // Register Skeltch directive
         Skeltch::directive('debugger', '<?php \Glowie\Plugins\Debugger\Debugger::render(); ?>');
 
+        // Check if debugger is disabled
+        if (self::isDisabled()) return;
+
+        // Get stacked data
+        self::$stackData = (new Session())->get('gdbg_stack', []);
+
         // Register query listener
         Factory::listen(function ($query, $bindings, $time, $status) {
-            self::$queries[] = [
+            $sql = [
                 'query' => $query,
                 'bindings' => self::parseBindings($bindings),
                 'time' => self::parseTime($time),
                 'status' => $status
             ];
+
+            if (self::$stack) {
+                self::$stackData['queries'][] = $sql;
+                (new Session())->set('gdbg_stack', self::$stackData);
+            } else {
+                self::$queries[] = $sql;
+            }
         });
     }
 
@@ -100,20 +113,16 @@ class Debugger extends Plugin
      */
     public static function render()
     {
-        // Check if debug mode is enabled and if the debugger was not already loaded
-        $debugMode = filter_var(Env::get('APP_DEBUG', false), FILTER_VALIDATE_BOOLEAN);
-        if (!$debugMode || !self::$isEnabled || self::$isLoaded) return;
-
-        // Get session stack data
+        // Check if debugger is disabled
+        if (self::isDisabled()) return;
         $session = new Session();
-        $stack = $session->getFlash('gdbg_stack');
 
         // Inject view
         $view = new View(__DIR__ . '/resources/debugger.phtml', [
             'css_path' => __DIR__ . '/resources/style.min.css',
             'js_path' => __DIR__ . '/resources/script.min.js',
-            'messages' => self::parseStack($stack['messages'] ?? null, self::$messages),
-            'exceptions' => self::parseStack($stack['exceptions'] ?? null, self::$exceptions),
+            'messages' => self::parseStack('messages', self::$messages),
+            'exceptions' => self::parseStack('exceptions', self::$exceptions),
             'params' => Rails::getParams()->toArray(),
             'request' => Rails::getRequest()->toCollection()->sortKeys(),
             'request_method' => Rails::getRequest()->getMethod(),
@@ -124,11 +133,14 @@ class Debugger extends Plugin
             'response' => Rails::getResponse()->getHeaders()->sortKeys(),
             'session' => $session->toCollection()->sortKeys(),
             'cookies' => (new Cookies())->toCollection()->sortKeys(),
-            'queries' => self::$queries,
+            'queries' => self::parseStack('queries', self::$queries),
             'views' => View::getRendered(),
-            'timers' => self::parseTimers($stack['timers'] ?? null),
+            'timers' => self::parseTimers(),
             'application' => self::parseAppInfo()
         ], true, true);
+
+        // Clear stack data
+        $session->remove('gdbg_stack');
 
         // Return content
         self::$isLoaded = true;
@@ -212,6 +224,7 @@ class Debugger extends Plugin
 
         if (self::$stack) {
             self::$stackData['exceptions'][] = $e;
+            (new Session())->set('gdbg_stack', self::$stackData);
         } else {
             self::$exceptions[] = $e;
         }
@@ -280,7 +293,10 @@ class Debugger extends Plugin
         self::$timers[$name]['duration'] = $duration;
         self::$timers[$name]['duration_string'] = self::parseTime($duration);
 
-        if (self::$stack) self::$stackData['timers'][$name] = self::$timers[$name];
+        if (self::$stack) {
+            self::$stackData['timers'][$name] = self::$timers[$name];
+            (new Session())->set('gdbg_stack', self::$stackData);
+        }
     }
 
     /**
@@ -312,8 +328,16 @@ class Debugger extends Plugin
     public static function stopCapture()
     {
         self::$stack = false;
-        (new Session())->setFlash('gdbg_stack', self::$stackData);
-        self::$stackData = [];
+    }
+
+    /**
+     * Checks if the debugger is disabled.
+     * @return bool True if disabled, false otherwise.
+     */
+    private static function isDisabled()
+    {
+        $debugMode = filter_var(Env::get('APP_DEBUG', false), FILTER_VALIDATE_BOOLEAN);
+        return (!$debugMode || !self::$isEnabled || self::$isLoaded);
     }
 
     /**
@@ -331,6 +355,7 @@ class Debugger extends Plugin
 
         if (self::$stack) {
             self::$stackData['messages'][] = $msg;
+            (new Session())->set('gdbg_stack', self::$stackData);
         } else {
             self::$messages[] = $msg;
         }
@@ -338,25 +363,24 @@ class Debugger extends Plugin
 
     /**
      * Merges the stack data with the application data.
-     * @param array|null $stackData Data from session flash.
-     * @param array|null $appData Data from the application.
+     * @param string $type Type of data to get from stack.
+     * @param array $appData Data from the application.
      * @return array Returns the merged data.
      */
-    private static function parseStack($stackData, $appData)
+    private static function parseStack(string $type, array $appData)
     {
-        if (!$stackData) return $appData;
-        return array_merge($stackData, $appData);
+        if (empty(self::$stackData[$type])) return $appData;
+        return array_merge(self::$stackData[$type], $appData);
     }
 
     /**
      * Parses the timers data.
-     * @param array|null $stackData Data from session flash.
      * @return array Returns the timers as an associative array.
      */
-    private static function parseTimers($stackData)
+    private static function parseTimers()
     {
         // Get from stack first, if exists
-        $timers = self::parseStack($stackData, self::$timers);
+        $timers = self::parseStack('timers', self::$timers);
 
         // Order timers from longest to shortest
         $timers = Util::orderArray($timers, 'duration', SORT_DESC);
