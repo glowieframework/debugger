@@ -331,6 +331,17 @@ class Debugger extends Plugin
     }
 
     /**
+     * Enclosures a set of functions with persisted logging.
+     * @param Closure $callback Function to run.
+     */
+    public static function capture(Closure $callback)
+    {
+        self::startCapture();
+        call_user_func($callback);
+        self::stopCapture();
+    }
+
+    /**
      * Checks if the debugger is disabled.
      * @return bool True if disabled, false otherwise.
      */
@@ -370,7 +381,8 @@ class Debugger extends Plugin
     private static function parseStack(string $type, array $appData)
     {
         if (empty(self::$stackData[$type])) return $appData;
-        return array_merge(self::$stackData[$type], $appData);
+        $data = array_merge(self::$stackData[$type], $appData);
+        return Util::orderArray($data, 'time');
     }
 
     /**
