@@ -117,6 +117,24 @@ Debugger::measure('Test', function(){
 });
 ```
 
+### Cross-request data
+The debug bar data is saved only during the current request, and subsequents requests will erase the data.
+
+If you need to persist the data over to the next request, use:
+
+```php
+use Glowie\Plugins\Debugger\Debugger;
+
+Debugger::startCapture();
+// your Debugger calls here
+Debugger::stopCapture();
+
+// or
+Debugger::capture(function(){
+    // your Debugger calls here
+});
+```
+
 ### Clear information
 In order to clear the debug bar data, use:
 
