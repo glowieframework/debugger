@@ -14,6 +14,7 @@ use Util;
 use Env;
 use Throwable;
 use Closure;
+use DateTime;
 use Exception;
 
 /**
@@ -219,7 +220,7 @@ class Debugger extends Plugin
     {
         $e = [
             'exception' => $exception,
-            'time' => self::parseTime(self::now())
+            'time' => self::nowAsDate()
         ];
 
         if (self::$stack) {
@@ -360,7 +361,7 @@ class Debugger extends Plugin
     {
         $msg = [
             'type' => $type,
-            'time' =>  self::parseTime(self::now()),
+            'time' =>  self::nowAsDate(),
             'text' => $message,
         ];
 
@@ -420,6 +421,15 @@ class Debugger extends Plugin
     private static function now()
     {
         return round((microtime(true) - APP_START_TIME) * 1000, 2);
+    }
+
+    /**
+     * Gets the current time as a formatted date.
+     * @return string Returns the current time as date.
+     */
+    private static function nowAsDate()
+    {
+        return (new DateTime())->format('Y-m-d H:i:s.v');
     }
 
     /**
