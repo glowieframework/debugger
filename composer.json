@@ -14,7 +14,7 @@
             "homepage": "https://glowie.gabrielsilva.dev.br"
         }
     ],
-    "require-dev": {
+    "require": {
         "glowieframework/glowie-core": "^1.8"
     },
     "autoload": {
