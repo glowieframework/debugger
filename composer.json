@@ -2,7 +2,7 @@
     "name": "glowieframework/debugger",
     "description": "Glowie debug bar plugin",
     "license": "MIT",
-    "homepage": "https://glowie.gabrielsilva.dev.br/debugger",
+    "homepage": "https://glowie.gabrielsilva.dev.br",
     "support": {
         "issues": "https://github.com/glowieframework/debugger/issues",
         "source": "https://github.com/glowieframework/debugger"
