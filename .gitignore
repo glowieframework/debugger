@@ -1,3 +1,5 @@
 # Ignore Composer packages
 /vendor/
+/node_modules/
 composer.lock
+package-lock.json

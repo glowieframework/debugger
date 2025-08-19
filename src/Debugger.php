@@ -14,6 +14,7 @@ use Util;
 use Env;
 use Throwable;
 use Closure;
+use Config;
 use DateTime;
 use Exception;
 
@@ -89,11 +90,12 @@ class Debugger extends Plugin
         if (self::isDisabled()) return;
 
         // Get stacked data
-        self::$stackData = (new Session())->get('gdbg_stack', []);
+        self::$stackData = (new Session())->get('debugger.stack', []);
 
         // Register query listener
-        Factory::listen(function ($query, $bindings, $time, $status) {
+        Factory::listen(function ($connection, $query, $bindings, $time, $status) {
             $sql = [
+                'connection' => $connection,
                 'query' => $query,
                 'bindings' => self::parseBindings($bindings),
                 'time' => self::parseTime($time),
@@ -102,7 +104,7 @@ class Debugger extends Plugin
 
             if (self::$stack) {
                 self::$stackData['queries'][] = $sql;
-                (new Session())->set('gdbg_stack', self::$stackData);
+                (new Session())->set('debugger.stack', self::$stackData);
             } else {
                 self::$queries[] = $sql;
             }
@@ -120,8 +122,8 @@ class Debugger extends Plugin
 
         // Inject view
         $view = new View(__DIR__ . '/resources/debugger.phtml', [
-            'css_path' => __DIR__ . '/resources/style.min.css',
-            'js_path' => __DIR__ . '/resources/script.min.js',
+            'css_path' => __DIR__ . '/resources/dist/style.min.css',
+            'js_path' => __DIR__ . '/resources/dist/script.min.js',
             'messages' => self::parseStack('messages', self::$messages),
             'exceptions' => self::parseStack('exceptions', self::$exceptions),
             'params' => Rails::getParams()->toArray(),
@@ -141,7 +143,7 @@ class Debugger extends Plugin
         ], true, true);
 
         // Clear stack data
-        $session->remove('gdbg_stack');
+        $session->remove('debugger.stack');
 
         // Return content
         self::$isLoaded = true;
@@ -225,7 +227,7 @@ class Debugger extends Plugin
 
         if (self::$stack) {
             self::$stackData['exceptions'][] = $e;
-            (new Session())->set('gdbg_stack', self::$stackData);
+            (new Session())->set('debugger.stack', self::$stackData);
         } else {
             self::$exceptions[] = $e;
         }
@@ -296,7 +298,7 @@ class Debugger extends Plugin
 
         if (self::$stack) {
             self::$stackData['timers'][$name] = self::$timers[$name];
-            (new Session())->set('gdbg_stack', self::$stackData);
+            (new Session())->set('debugger.stack', self::$stackData);
         }
     }
 
@@ -367,7 +369,7 @@ class Debugger extends Plugin
 
         if (self::$stack) {
             self::$stackData['messages'][] = $msg;
-            (new Session())->set('gdbg_stack', self::$stackData);
+            (new Session())->set('debugger.stack', self::$stackData);
         } else {
             self::$messages[] = $msg;
         }
@@ -440,6 +442,9 @@ class Debugger extends Plugin
     {
         $route = Rails::getRoute(Rails::getCurrentRoute());
         return [
+            'Name' => Config::get('app_name', 'Glowie'),
+            'Environment' => Config::get('env', 'development'),
+            'Maintenance' => Config::get('maintenance.enabled', false) ? 'true' : 'false',
             'Route' => !empty($route['name']) ? $route['name'] : '/',
             'Group' => Rails::getCurrentGroup() ?? '-',
             'Controller' => $route['controller'] ?? '-',

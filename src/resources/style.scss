@@ -247,10 +247,17 @@
 
                     &.gdbg-filter-active {
                         opacity: 1;
+                        position: relative;
 
                         &:before {
-                            content: '☑️';
-                            margin-right: 5px;
+                            width: 10px;
+                            height: 10px;
+                            border-radius: 100%;
+                            background-color: red;
+                            position: absolute;
+                            top: -5px;
+                            right: -5px;
+                            content: "";
                         }
                     }
 
